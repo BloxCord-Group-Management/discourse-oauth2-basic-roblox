@@ -312,8 +312,8 @@ class ::OAuth2BasicAuthenticator < Auth::ManagedAuthenticator
         # ]
         # auth["info"]["image"] = fetched_user_details[:avatar] if fetched_user_details[:avatar]
 
-        auth["info"]["nickname"] = fetch_roblox_username(:user_id)
-        auth["info"]["image"] = fetch_roblox_avatar_url(:user_id)
+        auth["info"]["nickname"] = fetch_roblox_username(fetched_user_details[:user_id])
+        auth["info"]["image"] = fetch_roblox_avatar_url(fetched_user_details[:user_id])
 
         %w[name email email_verified].each do |property|
           auth["info"][property] = fetched_user_details[property.to_sym] if fetched_user_details[
