@@ -269,6 +269,36 @@ class ::OAuth2BasicAuthenticator < Auth::ManagedAuthenticator
     SiteSetting.oauth2_overrides_email
   end
 
+  def fetch_roblox_username(user_id)
+    require 'net/http'
+    require 'json'
+  
+    roblox_api_url = "https://users.roblox.com/v1/users/#{user_id}"
+    uri = URI(roblox_api_url)
+    response = Net::HTTP.get(uri)
+    user_data = JSON.parse(response)
+  
+    if response.is_a?(Net::HTTPSuccess)
+      user_data = JSON.parse(response.body)
+      user_data["name"]
+    else
+      raise "Failed to fetch Roblox username for UserID: #{user_id}"
+    end
+  end
+
+  def fetch_roblox_avatar_url(user_id)
+    avatar_api_url = "https://thumbnails.roblox.com/v1/users/avatar-bust?userIds=#{user_id}&size=48x48&format=Png&isCircular=false"
+    uri = URI(avatar_api_url)
+    response = Net::HTTP.get_response(uri)
+  
+    if response.is_a?(Net::HTTPSuccess)
+      avatar_data = JSON.parse(response.body)
+      avatar_data["data"].first["imageUrl"]
+    else
+      raise "Failed to fetch Roblox avatar for UserID: #{user_id}"
+    end
+  end  
+
   def after_authenticate(auth, existing_account: nil)
     log(
       "after_authenticate response: \n\ncreds: #{auth["credentials"].to_hash}\nuid: #{auth["uid"]}\ninfo: #{auth["info"].to_hash}\nextra: #{auth["extra"].to_hash}",
@@ -277,10 +307,14 @@ class ::OAuth2BasicAuthenticator < Auth::ManagedAuthenticator
     if SiteSetting.oauth2_fetch_user_details?
       if fetched_user_details = fetch_user_details(auth["credentials"]["token"], auth["uid"])
         auth["uid"] = fetched_user_details[:user_id] if fetched_user_details[:user_id]
-        auth["info"]["nickname"] = fetched_user_details[:username] if fetched_user_details[
-          :username
-        ]
-        auth["info"]["image"] = fetched_user_details[:avatar] if fetched_user_details[:avatar]
+        # auth["info"]["nickname"] = fetched_user_details[:username] if fetched_user_details[
+        #   :username
+        # ]
+        # auth["info"]["image"] = fetched_user_details[:avatar] if fetched_user_details[:avatar]
+
+        auth["info"]["nickname"] = fetch_roblox_username(:user_id)
+        auth["info"]["image"] = fetch_roblox_avatar_url(:user_id)
+
         %w[name email email_verified].each do |property|
           auth["info"][property] = fetched_user_details[property.to_sym] if fetched_user_details[
             property.to_sym

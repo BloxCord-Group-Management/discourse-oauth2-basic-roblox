@@ -1,8 +1,8 @@
 {
-  "name": "discourse-oauth2-basic",
+  "name": "discourse-oauth2-basic-roblox",
   "version": "1.0.0",
-  "repository": "https://github.com/discourse/discourse-oauth2-basic",
-  "author": "Discourse",
+  "repository": "https://github.com/BloxCord-Group-Management/discourse-oauth2-basic-roblox",
+  "author": "Discourse & BloxCord",
   "license": "MIT",
   "devDependencies": {
     "eslint-config-discourse": "^3.1.0"
