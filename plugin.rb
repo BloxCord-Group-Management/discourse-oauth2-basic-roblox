@@ -275,16 +275,16 @@ class ::OAuth2BasicAuthenticator < Auth::ManagedAuthenticator
   
     roblox_api_url = "https://users.roblox.com/v1/users/#{user_id}"
     uri = URI(roblox_api_url)
-    response = Net::HTTP.get(uri)
-    user_data = JSON.parse(response)
+    response = Net::HTTP.get_response(uri) # Get the response object instead of the response body
   
     if response.is_a?(Net::HTTPSuccess)
       user_data = JSON.parse(response.body)
       user_data["name"]
     else
-      raise "Failed to fetch Roblox username for UserID: #{user_id}"
+      raise "Failed to fetch Roblox username for UserID: #{user_id}. API response: #{response.body}"
     end
   end
+  
 
   def fetch_roblox_avatar_url(user_id)
     avatar_api_url = "https://thumbnails.roblox.com/v1/users/avatar-bust?userIds=#{user_id}&size=48x48&format=Png&isCircular=false"
@@ -295,7 +295,7 @@ class ::OAuth2BasicAuthenticator < Auth::ManagedAuthenticator
       avatar_data = JSON.parse(response.body)
       avatar_data["data"].first["imageUrl"]
     else
-      raise "Failed to fetch Roblox avatar for UserID: #{user_id}"
+      raise "Failed to fetch Roblox avatar for UserID: #{user_id}. API response: #{response.body}"
     end
   end  
 
