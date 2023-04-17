@@ -269,7 +269,7 @@ class ::OAuth2BasicAuthenticator < Auth::ManagedAuthenticator
     SiteSetting.oauth2_overrides_email
   end
 
-  def fetch_roblox_username(user_id)
+  def fetch_roblox_username(user_id) # Fetch the Roblox *username* from the Roblox API 
     require 'net/http'
     require 'json'
   
@@ -286,7 +286,7 @@ class ::OAuth2BasicAuthenticator < Auth::ManagedAuthenticator
   end
   
 
-  def fetch_roblox_avatar_url(user_id)
+  def fetch_roblox_avatar_url(user_id) # Fetch the Roblox avatar image from the Roblox API
     avatar_api_url = "https://thumbnails.roblox.com/v1/users/avatar-bust?userIds=#{user_id}&size=420x420&format=Png&isCircular=false"
     uri = URI(avatar_api_url)
     response = Net::HTTP.get_response(uri)
@@ -311,6 +311,8 @@ class ::OAuth2BasicAuthenticator < Auth::ManagedAuthenticator
         #   :username
         # ]
         # auth["info"]["image"] = fetched_user_details[:avatar] if fetched_user_details[:avatar]
+
+        # Here we set the nickname (username) and avatar to the ones we fetch from the Roblox API
 
         auth["info"]["nickname"] = fetch_roblox_username(fetched_user_details[:user_id])
         auth["info"]["image"] = fetch_roblox_avatar_url(fetched_user_details[:user_id])
