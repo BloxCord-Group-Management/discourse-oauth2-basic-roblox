@@ -287,7 +287,7 @@ class ::OAuth2BasicAuthenticator < Auth::ManagedAuthenticator
   
 
   def fetch_roblox_avatar_url(user_id)
-    avatar_api_url = "https://thumbnails.roblox.com/v1/users/avatar-bust?userIds=#{user_id}&size=48x48&format=Png&isCircular=false"
+    avatar_api_url = "https://thumbnails.roblox.com/v1/users/avatar-bust?userIds=#{user_id}&size=420x420&format=Png&isCircular=false"
     uri = URI(avatar_api_url)
     response = Net::HTTP.get_response(uri)
   
